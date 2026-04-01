@@ -4,7 +4,7 @@
 
 # 1. What is Docker?
 
-## ✅ Answer (Interview Style)
+## ✅ Answer
 
 Docker is a containerization tool used to package an application along with its dependencies, libraries, and runtime into a single unit called an image.
 
