@@ -253,3 +253,241 @@ It is mainly used for background processing, automation, and serverless APIs.
 Lambda allows us to execute code on demand without maintaining infrastructure. It is highly scalable, cost-efficient, and ideal for event-driven applications.
 
 ---
+
+
+# 🚀 Go Lambda API – Step-by-Step Deployment Guide
+
+This project demonstrates how to build and deploy a simple **Go API using AWS Lambda and API Gateway**.
+
+---
+
+# 📌 Overview
+
+We are building a simple API:
+
+```
+GET /hello
+```
+
+Response:
+
+```
+Hello Dinesh
+```
+
+---
+
+# 🏗️ Architecture
+
+```
+Client (Browser / Postman)
+        ↓
+API Gateway
+        ↓
+AWS Lambda (Go)
+        ↓
+Response
+```
+
+---
+
+# ⚙️ Prerequisites
+
+Make sure you have installed:
+
+* Go (>= 1.20)
+* AWS CLI (configured with credentials)
+* ZIP utility
+
+---
+
+# 📁 Project Structure
+
+```
+.
+├── main.go
+├── go.mod
+└── function.zip
+```
+
+---
+
+# 🧾 Step 1: Create Go Application
+
+Create a file `main.go`:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/aws/aws-lambda-go/lambda"
+)
+
+type Request struct {
+	Name string `json:"name"`
+}
+
+type Response struct {
+	Message string `json:"message"`
+}
+
+func handler(ctx context.Context, req Request) (Response, error) {
+	name := req.Name
+	if name == "" {
+		name = "Dinesh"
+	}
+
+	return Response{
+		Message: fmt.Sprintf("Hello %s", name),
+	}, nil
+}
+
+func main() {
+	lambda.Start(handler)
+}
+```
+
+---
+
+# 📦 Step 2: Initialize Go Module
+
+```bash
+go mod init hello-lambda
+go get github.com/aws/aws-lambda-go/lambda
+```
+
+---
+
+# 🔨 Step 3: Build Binary for Lambda
+
+```bash
+GOOS=linux GOARCH=amd64 go build -o main
+```
+
+---
+
+# 📁 Step 4: Create Deployment Package
+
+```bash
+zip function.zip main
+```
+
+---
+
+# ☁️ Step 5: Create Lambda Function
+
+1. Go to AWS Console
+2. Navigate to Lambda
+3. Click **Create Function**
+4. Choose:
+
+   * Runtime: Go
+5. Upload `function.zip`
+6. Set handler:
+
+   ```
+   main
+   ```
+
+---
+
+# 🌐 Step 6: Create API Gateway
+
+1. Go to API Gateway
+2. Create **HTTP API**
+3. Add route:
+
+   ```
+   GET /hello
+   ```
+4. Attach the Lambda function
+
+---
+
+# 🚀 Step 7: Deploy API
+
+* Click **Deploy**
+* Copy the generated URL
+
+Example:
+
+```
+https://abc123.execute-api.amazonaws.com/hello
+```
+
+---
+
+# 🧪 Step 8: Test API
+
+### Browser:
+
+```
+https://your-url/hello
+```
+
+### Postman (Optional):
+
+```json
+{
+  "name": "Dinesh"
+}
+```
+
+### Expected Response:
+
+```json
+{
+  "message": "Hello Dinesh"
+}
+```
+
+---
+
+# 🔥 Optional Improvements
+
+### Use API Gateway Proxy
+
+```go
+import "github.com/aws/aws-lambda-go/events"
+
+func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
+```
+
+---
+
+### Add Logging
+
+```go
+fmt.Println("Request received:", req)
+```
+
+---
+
+### Use Environment Variables
+
+```go
+os.Getenv("ENV")
+```
+
+---
+
+# ⚠️ Common Issues
+
+| Issue                 | Fix                                |
+| --------------------- | ---------------------------------- |
+| Lambda not triggering | Check API Gateway integration      |
+| Wrong response format | Use correct struct or proxy format |
+| Build not working     | Ensure GOOS=linux                  |
+
+---
+
+# 🎯 Summary
+
+* Lambda runs your Go code without managing servers
+* API Gateway exposes HTTP endpoints
+* You only pay when your code runs
+
+---
